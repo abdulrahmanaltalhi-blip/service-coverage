@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Service Coverage</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--tx:#14213d;--mu:#6b7385;--ln:#e3e6ec;--ac:#0f766e;--ac2:#14b8a6;--up:#15803d;--dn:#b91c1c;--bt:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1520;--card:#18212f;--tx:#e8ecf3;--mu:#98a2b5;--ln:#283244;--ac:#2dd4bf;--ac2:#0f766e;--up:#4ade80;--dn:#f87171;--bt:#06201c}}
+:root[data-theme="dark"]{--bg:#0f1520;--card:#18212f;--tx:#e8ecf3;--mu:#98a2b5;--ln:#283244;--ac:#2dd4bf;--ac2:#0f766e;--up:#4ade80;--dn:#f87171;--bt:#06201c}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+.w{max-width:1100px;margin:0 auto;padding:16px}h1{font-size:22px;margin:0}h2{font-size:16px;margin:0 0 8px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}.mu{color:var(--mu);font-size:13px}
+.btn{background:var(--ac);color:var(--bt);border:0;border-radius:8px;padding:9px 14px;font:inherit;cursor:pointer}
+.nav{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.tb{padding:9px 18px;border:1px solid var(--ln);background:var(--card);color:var(--tx);border-radius:999px;font:inherit;cursor:pointer}
+.tb.on{background:var(--ac);color:var(--bt);border-color:var(--ac)}.chips .tb{padding:6px 13px;font-size:14px}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:14px;margin-bottom:14px}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.k{background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:14px}.k b{display:block;font-size:28px}
+.ch{display:flex;gap:14px;align-items:flex-end;height:240px;padding-top:6px}
+.c{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font-size:13px}
+.c i{display:block;width:62%;min-height:2px;border-radius:6px 6px 0 0;background:linear-gradient(0deg,var(--ac2),var(--ac))}
+.c .v{font-weight:700;margin-bottom:3px}.c .l{margin-top:4px}.c .gr{height:16px;font-size:12px}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.sc{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--ln);text-align:center;white-space:nowrap}th{color:var(--mu);font-weight:500}td:first-child,th:first-child{text-align:left}
+tr.t td{font-weight:700}.msg{padding:10px;border-radius:8px;background:var(--card);border:1px dashed var(--ln);margin-bottom:12px;font-size:14px}
+</style></head><body><div class="w">
+<div class="top"><div><h1>Service Coverage</h1><div class="mu" id="meta"></div></div>
+<div><button class="btn" id="up">Upload Excel</button> <button class="btn" id="sv">Save as Excel</button><input type="file" id="fi" accept=".xlsx,.xls" hidden></div></div>
+<div id="msg"></div>
+<div class="nav"><button class="tb on" data-v="c">Coverage</button><button class="tb" data-v="p">Operation Volume</button></div>
+<div id="out"></div></div>
+<script>
+const D0=[["Project ", "Start Date", "Hospitals", "Centers", "Departments", "Number of Beds", "Total Normal Order", "Total Urgent Order", "Total", "Total Normal Order 2024", "Total Urgent Order 2024", "Total Order 2024 ", "Total Normal Order 2025", "Total Urgent Order 2025", " Total Order 2025", "Total Normal Order 2026", "Total Urgent Order 2026", " Total Order 2026"], ["YUNBU", "2025-07-01T00:00:00", 1, 20, 35, 300, 19551, 424, 19975, 0, 0, 0, 7644, 232, 7876, 11907, 192, 12099], ["AL SULAYYIL", "2025-12-01T00:00:00", 2, 7, 51, 250, 7149, 198, 7347, 0, 0, 0, 45, 0, 45, 7104, 198, 7302], ["DAWADIMI", "2025-09-01T00:00:00", 3, 75, 79, 480, 18595, 607, 19202, 0, 0, 0, 5682, 312, 5994, 12913, 295, 13208], ["TAIF", 2026, 2, 0, 60, 880, 1703, 6, 1709, 0, 0, 0, 0, 0, 0, 1703, 6, 1709], ["SUDAIR", "2024-06-01T00:00:00", 7, 53, 143, 800, 39405, 2060, 41465, 5775, 470, 6245, 17962, 897, 18859, 15668, 693, 16361], ["AlLULA", "2025-10-01T00:00:00", 1, 11, 28, 300, 10179, 217, 10396, 0, 0, 0, 1766, 41, 1807, 8413, 176, 8589], ["QUNFUDAH", "2026-09-01T00:00:00", 2, 17, 18, 200, 10, 0, 10, 0, 0, 0, 0, 0, 0, 10, 0, 10], ["TOTAL", null, 18, 183, 414, 3210, 96592, 3512, 100104, 5775, 470, 6245, 33099, 1482, 34581, 57718, 1560, 59278]];
+let A=D0,nm='Initial file',at=null,db=null,sel='ALL',view='c';
+const $=s=>document.querySelector(s),f=n=>Math.round(n).toLocaleString('en-US');
+const dt=v=>{if(v==null||v==='')return null;if(typeof v==='number'&&v>1990&&v<2100)return new Date(v,0,1);const d=new Date(v);return isNaN(d)?null:new Date(+d+432e5)};
+function parse(a){const h=a[0].map(x=>String(x||'').trim()),ys={};
+h.forEach((t,i)=>{const m=t.match(/^Total\s+(Normal|Urgent)?\s*Order\s+(\d{4})$/i);if(m)(ys[m[2]]=ys[m[2]]||{})[(m[1]||'T')[0].toUpperCase()]=i});
+const ix=r=>h.findIndex(t=>r.test(t)),si=ix(/start/i),hi=ix(/hospital/i),ci=ix(/center/i),di=ix(/department/i),bi=ix(/bed/i),P=[];
+const Yo=Object.keys(ys).map(Number).sort();
+a.slice(1).forEach(r=>{const n=String(r[0]||'').trim();if(!n||/^total$/i.test(n))return;const y={};
+for(const k in ys){const c=ys[k],g=i=>+r[i]||0,N=c.N!=null?g(c.N):0,U=c.U!=null?g(c.U):0;y[k]={n:N,u:U,t:c.T!=null?g(c.T):N+U}}
+let s=dt(r[si]);if(!s){const fy=Yo.find(k=>y[k]&&y[k].t>0);s=new Date(fy||Yo[Yo.length-1]||2024,0,1)}
+P.push({n,s,h:+r[hi]||0,c:+r[ci]||0,d:+r[di]||0,b:+r[bi]||0,y})});
+const all=Yo.concat(P.map(p=>p.s.getFullYear()));const Y=[];for(let y=Math.min(...all);y<=Math.max(...all);y++)Y.push(y);
+return{P,Y,Yo}}
+function col(lab,v){const mx=Math.max(...v,1);return '<div class="ch" dir="ltr">'+v.map((x,i)=>{const p=v[i-1],g=i&&p?(x-p)/p*100:null;
+return `<div class="c"><span class="v">${f(x)}</span><i style="height:${x/mx*170}px"></i><span class="l">${lab[i]}</span><span class="gr ${g>=0?'up':'dn'}">${g==null?'':(g>=0?'▲ ':'▼ ')+Math.abs(g).toFixed(0)+'%'}</span></div>`}).join('')+'</div>'}
+const sum=(P,fn)=>P.reduce((a,p)=>a+fn(p),0);
+const M=['01','02','03','04','05','06','07','08','09','10','11','12'],ds=p=>p.s.getFullYear()+'-'+M[p.s.getMonth()];
+const cum=(D,y,k)=>sum(D.P.filter(p=>p.s.getFullYear()<=y),p=>p[k]);
+function render(){const D=parse(A);$('#meta').textContent='Source: '+nm+(at?' · '+new Date(at).toLocaleDateString('en-GB'):'');let h='';
+if(view=='p'){const L=[['ALL','All Projects']].concat(D.P.map(p=>[p.n,p.n])),S=sel=='ALL'?D.P:D.P.filter(p=>p.n==sel),Y=D.Yo,T=y=>sum(S,p=>p.y[y]?p.y[y].t:0),U=y=>sum(S,p=>p.y[y]?p.y[y].u:0);
+h+='<div class="nav chips">'+L.map(l=>`<button class="tb${l[0]==sel?' on':''}" data-s="${l[0]}">${l[1]}</button>`).join('')+'</div>';
+h+=`<div class="card"><h2>Orders Growth by Year: ${sel=='ALL'?'All Projects':sel}</h2><div class="mu">Total = Normal + Urgent</div>${col(Y,Y.map(T))}</div>
+<div class="card"><h2>Urgent Orders Growth by Year: ${sel=='ALL'?'All Projects':sel}</h2>${col(Y,Y.map(U))}</div>
+<div class="card sc"><table><tr><th>Year</th><th>Normal</th><th>Urgent</th><th>Total</th></tr>`+Y.map(y=>`<tr><td>${y}</td><td>${f(sum(S,p=>p.y[y]?p.y[y].n:0))}</td><td>${f(sum(S,p=>p.y[y]?p.y[y].u:0))}</td><td><b>${f(T(y))}</b></td></tr>`).join('')+'</table></div>'}
+else{const P=D.P,K=[['h','Hospitals'],['c','Centers'],['d','Departments'],['b','Beds']];
+h+='<div class="g4">'+K.map(k=>`<div class="k"><span class="mu">${k[1]}</span><b>${f(sum(P,p=>p[k[0]]))}</b></div>`).join('')+'</div><div class="g2">'+
+K.map(k=>`<div class="card"><h2>${k[1]} Growth (All Projects)</h2>${col(D.Y,D.Y.map(y=>cum(D,y,k[0])))}</div>`).join('')+'</div>'+
+`<div class="card sc"><h2>Projects Summary</h2><table><tr><th>Project</th><th>Start</th>${K.map(k=>`<th>${k[1]}</th>`).join('')}</tr>`+P.map(p=>`<tr><td>${p.n}</td><td>${ds(p)}</td>${K.map(k=>`<td>${f(p[k[0]])}</td>`).join('')}</tr>`).join('')+`<tr class="t"><td>Total</td><td></td>${K.map(k=>`<td>${f(sum(P,p=>p[k[0]]))}</td>`).join('')}</tr></table></div>`}
+$('#out').innerHTML=h;document.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{sel=b.dataset.s;render()})}
+document.querySelectorAll('.nav .tb[data-v]').forEach(b=>b.onclick=()=>{view=b.dataset.v;document.querySelectorAll('.nav .tb[data-v]').forEach(x=>x.classList.toggle('on',x==b));render()});
+const note=t=>{$('#msg').innerHTML='<div class="msg">'+t+'</div>';setTimeout(()=>$('#msg').innerHTML='',6000)};
+$('#up').onclick=()=>$('#fi').click();
+$('#fi').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{
+const wb=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:true}),n=wb.SheetNames.includes('PSC')?'PSC':wb.SheetNames[0],
+a=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,raw:true,cellDates:true,defval:null});
+if(!parse(a).Yo.length){note('No year columns found (e.g. Total Order 2025) in the file.');return}
+A=a;nm=file.name;at=Date.now();render();
+if(!db){note('Updated for this session only (could not save permanently).');return}
+try{await db.doc('datasets/main').set({json:JSON.stringify(a),name:nm,at});note('Updated and saved to the link.')}catch(x){note('Updated, but permanent saving is for the owner only.')}
+}catch(x){note('Could not read the file.')}};
+$('#sv').onclick=async()=>{const D=parse(A),Y=D.Yo,K=['h','c','d','b'],wb=XLSX.utils.book_new(),add=(n,r)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r),n);
+add('Projects Summary',[['Project','Start Date','Hospitals','Centers','Departments','Beds']].concat(D.P.map(p=>[p.n,ds(p),p.h,p.c,p.d,p.b]),[['Total',''].concat(K.map(k=>sum(D.P,p=>p[k])))]));
+add('Orders by Year',[['Project'].concat(...Y.map(y=>['Normal '+y,'Urgent '+y,'Total '+y]),['All Years Total'])].concat(D.P.map(p=>[p.n].concat(...Y.map(y=>{const v=p.y[y]||{n:0,u:0,t:0};return[v.n,v.u,v.t]}),[sum(Y.map(y=>p.y[y]?p.y[y].t:0),x=>x)])),[['Total'].concat(...Y.map(y=>['n','u','t'].map(k=>sum(D.P,p=>p.y[y]?p.y[y][k]:0))),[sum(D.P,p=>sum(Y.map(y=>p.y[y]?p.y[y].t:0),x=>x))])]));
+add('Coverage Growth',[['Year','Hospitals','Centers','Departments','Beds']].concat(D.Y.map(y=>[y].concat(K.map(k=>cum(D,y,k))))));
+const name='Service_Coverage_'+new Date().toISOString().slice(0,10)+'.xlsx';
+try{const d=await claude.use('downloads');if(d){await d.save({filename:name,data:XLSX.write(wb,{type:'array',bookType:'xlsx'})});note('Excel file saved.');return}}catch(e){if(e&&e.code=='declined')return}
+XLSX.writeFile(wb,name);note('Excel file ready for download.')};
+render();
+(async()=>{try{db=await claude.use('db')}catch(e){}if(!db)return;try{const a=await db.doc('datasets/main').get();if(a.exists){const d=a.data();A=JSON.parse(d.json);nm=d.name;at=d.at;render()}}catch(e){}})();
+</script></body></html>
